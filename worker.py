@@ -15,12 +15,12 @@ def embed(texts):
     out = sess.run(None, feed)[0]; m = mask[..., None].astype(np.float32); v = (out * m).sum(1) / m.sum(1)
     return v / np.linalg.norm(v, axis=1, keepdims=True)
 def call(body):
-    for a in range(5):
+    for a in range(40):
         try:
             r = requests.post(API, headers=H, json=body, timeout=120)
             if r.ok: return r.json()
         except Exception: pass
-        time.sleep(5 * (a + 1))
+        time.sleep(min(120, 10 * (a + 1)))
     raise RuntimeError("api failed")
 done = 0; t0 = time.time(); empty = 0
 while time.time() < STOP:
@@ -34,6 +34,6 @@ while time.time() < STOP:
     for i in range(0, len(rows), 16):
         part = rows[i:i + 16]; vs = embed([r["txt"] or " " for r in part])
         out += [{"id": r["id"], "v": [round(float(x), 6) for x in v]} for r, v in zip(part, vs)]
-    call({"mode": "write", "table": table, "rows": out}); done += len(out)
+    call({"mode": "write", "table": table, "rows": out}); done += len(out); time.sleep(3)
     if done % 1024 < 64: print(f"shard {SHARD}: {done} done, {done / (time.time() - t0):.1f}/s", flush=True)
 print(f"shard {SHARD} finished: {done} vectors", flush=True)
