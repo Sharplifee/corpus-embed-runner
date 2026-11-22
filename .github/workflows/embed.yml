@@ -1,9 +1,8 @@
 name: corpus-embed
 on:
-  push:
   workflow_dispatch:
   schedule:
-    - cron: "23 */6 * * *"
+    - cron: "3 6 * * *"   # 11:03 PM Denver (MST), nightly only
 concurrency: { group: corpus-embed, cancel-in-progress: false }
 jobs:
   embed:
@@ -12,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0,1,2,3,4,5,6,7]
+        shard: [0,1,2,3,4,5]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,5 +22,5 @@ jobs:
         env:
           GTE_SECRET: ${{ secrets.GTE_SECRET }}
           SHARD: ${{ matrix.shard }}
-          SHARDS: "8"
-          MAX_SECONDS: "19800"
+          SHARDS: "6"
+          MAX_SECONDS: "19500"
