@@ -2,7 +2,7 @@ name: corpus-embed
 on:
   workflow_dispatch:
   schedule:
-    - cron: "3 6 * * *"   # 11:03 PM Denver (MST), nightly only
+    - cron: "17 */2 * * *"   # every 2 hours: catches anything the per-minute updater misses (public repo = free minutes)
 concurrency: { group: corpus-embed-v2, cancel-in-progress: false }
 jobs:
   embed:
